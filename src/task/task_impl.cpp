@@ -27,10 +27,7 @@ std::any TaskImpl::Execute()
     return result;
 }
 
-void TaskImpl::Reset()
-{
-    StateTransitionImpl::TryTransition(TaskState::Initialized);
-}
+void TaskImpl::Reset() { StateTransitionImpl::TryTransition(TaskState::Initialized); }
 
 bool TaskImpl::SetPriority(Priority priority)
 {

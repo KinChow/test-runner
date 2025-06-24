@@ -78,7 +78,7 @@ public:
      * @param args Task function arguments
      */
     template <typename F, typename... Args>
-    requires std::is_invocable_v<F, Args...>
+        requires std::is_invocable_v<F, Args...>
     void Init(F &&f, Args &&...args)
     {
         if (GetState() != TaskState::Created) {

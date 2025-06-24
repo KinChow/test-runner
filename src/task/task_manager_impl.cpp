@@ -1,9 +1,9 @@
 #include "task_manager_impl.h"
 
+#include <algorithm>
 #include <limits>
 #include <memory>
 #include <ranges>
-#include <algorithm>
 
 #include "log.h"
 #include "task_impl.h"
@@ -25,14 +25,14 @@ bool TaskManagerImpl::Remove(uint64_t task_id)
 
     auto task_it = tasks_.find(task_id);
     if (task_it == tasks_.end()) {
-        LOGW("Attempted to remove non-existent task ID: %lu", task_id);
+        LOGW("Attempted to remove non-existent task ID: %llu", task_id);
         return false;
     }
 
     TaskState state = task_it->second->GetState();
     // Allow removal of non-terminal tasks, but log warning
     if (state != TaskState::Completed && state != TaskState::Failed) {
-        LOGW("Attempted to remove active task ID: %lu (state: %d)", task_id, static_cast<int>(state));
+        LOGW("Attempted to remove active task ID: %llu (state: %d)", task_id, static_cast<int>(state));
     }
 
     tasks_.erase(task_it);
@@ -68,7 +68,7 @@ void TaskManagerImpl::CleanupExpiredTasks()
 
     // Clean up expired tasks
     for (auto task_id : expired_task_ids) {
-        LOGW("Task %lu has expired, removing it", task_id);
+        LOGW("Task %llu has expired, removing it", task_id);
         recycled_ids_.push(task_id);
         task_creation_times_.erase(task_id);
         tasks_.erase(task_id);
