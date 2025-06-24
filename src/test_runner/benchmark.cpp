@@ -4,25 +4,25 @@
 #include "log.h"
 #include "test_runner.h"
 
-
 bool Benchmark::Run()
 {
-    if (!baseline_task_ || baseline_task_->GetState() != TaskState::Initialized) {
+    auto &baseline_task = baseline_task_.second;
+    if (!baseline_task || baseline_task->GetState() != TaskState::Initialized) {
         LOGE("Baseline task is not initialized.");
         return false;
     }
 
     for (size_t i = 0; i < warmup_iterations_; ++i) {
-        baseline_task_->Execute();
-        baseline_task_->Reset();
+        baseline_task->Execute();
+        baseline_task->Reset();
     }
     for (size_t i = 0; i < benchmark_iterations_; ++i) {
-        baseline_task_->Execute();
-        auto task_duration = baseline_task_->GetDuration();
+        baseline_task->Execute();
+        auto task_duration = baseline_task->GetDuration();
         baseline_duration_.total_duration += task_duration;
         baseline_duration_.min_duration = std::min(baseline_duration_.min_duration, task_duration);
         baseline_duration_.max_duration = std::max(baseline_duration_.max_duration, task_duration);
-        baseline_task_->Reset();
+        baseline_task->Reset();
     }
     baseline_duration_.average_duration = baseline_duration_.total_duration / benchmark_iterations_;
 
@@ -63,7 +63,7 @@ std::string Benchmark::GetResultString()
     oss << "------------------------------------------------------------------------------------\n";
 
     // Baseline
-    oss << std::format("| {:<20} | {:12.3f} | {:12.3f} | {:12.3f} | {:>10} |\n", "Baseline",
+    oss << std::format("| {:<20} | {:12.3f} | {:12.3f} | {:12.3f} | {:>10} |\n", baseline_task_.first,
         baseline_duration_.min_duration.count(), baseline_duration_.max_duration.count(),
         baseline_duration_.average_duration.count(), "-");
 

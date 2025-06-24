@@ -3,7 +3,6 @@
 #include "log.h"
 #include "test_runner.h"
 
-
 int main(int argc, char *argv[])
 {
     Benchmark benchmark(10, 100);
@@ -14,8 +13,8 @@ int main(int argc, char *argv[])
     std::vector<float> comparison_data_a(kSize);
     std::vector<float> comparison_data_b(kSize);
     std::vector<float> comparison_result(kSize);
-    benchmark.AddBaselineTask(
-        ElementwiseAdd, baseline_data_a.data(), baseline_data_b.data(), baseline_result.data(), kSize);
+    benchmark.AddBaselineTask("ElementwiseAdd", ElementwiseAdd, baseline_data_a.data(), baseline_data_b.data(),
+        baseline_result.data(), kSize);
     benchmark.AddComparisonTask("ElementwiseAddUnroll", ElementwiseAddUnroll, comparison_data_a.data(),
         comparison_data_b.data(), comparison_result.data(), kSize);
     if (!benchmark.Run()) {

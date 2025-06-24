@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include "task.h"
 
-
 class Validation {
 public:
     Validation();
@@ -13,11 +12,12 @@ public:
 
     template <typename F, typename... Args>
         requires std::is_invocable_v<F, Args...>
-    bool AddBaselineTask(F &&f, Args &&...args)
+    bool AddBaselineTask(const std::string &name, F &&f, Args &&...args)
     {
-        baseline_task_ = task_manager_->CreateTask();
-        baseline_task_->Init(std::forward<F>(f), std::forward<Args>(args)...);
-        return baseline_task_->GetState() == TaskState::Initialized;
+        baseline_task_ = std::make_pair(name, task_manager_->CreateTask());
+        auto &baseline_task = baseline_task_.second;
+        baseline_task->Init(std::forward<F>(f), std::forward<Args>(args)...);
+        return baseline_task->GetState() == TaskState::Initialized;
     }
 
     template <typename F, typename... Args>
@@ -37,7 +37,7 @@ public:
 
 protected:
     std::unique_ptr<TaskManager> task_manager_;
-    std::shared_ptr<Task> baseline_task_;
+    std::pair<std::string, std::shared_ptr<Task>> baseline_task_;
     std::unordered_map<std::string, std::shared_ptr<Task>> comparison_tasks_;
 };
 
