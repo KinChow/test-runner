@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[])
 {
+    (void)argc; // Unused parameter
+    (void)argv; // Unused parameter
     Benchmark benchmark(10, 100);
     constexpr size_t kSize = 1024 * 1024 * 32;
     std::vector<float> baseline_data_a(kSize);

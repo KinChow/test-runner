@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <format>
+#include <iomanip>
 #include <sstream>
 #include "log.h"
 #include "test_runner.h"
@@ -55,23 +55,32 @@ std::string Benchmark::GetResultString()
     std::string result;
     std::ostringstream oss;
     oss << "================================= Benchmark Result =================================\n";
-    oss << std::format("Warmup Iterations : {}\n", warmup_iterations_);
-    oss << std::format("Benchmark Iterations : {}\n", benchmark_iterations_);
+    oss << "Warmup Iterations : " << warmup_iterations_ << "\n";
+    oss << "Benchmark Iterations : " << benchmark_iterations_ << "\n";
     oss << "------------------------------------------------------------------------------------\n";
-    oss << std::format(
-        "| {:<20} | {:<12} | {:<12} | {:<12} | {:<10} |\n", "Task", "Min(ms)", "Max(ms)", "Avg(ms)", "Speedup");
+
+    oss << "| " << std::left << std::setw(20) << "Task"
+        << " | " << std::setw(12) << "Min(ms)"
+        << " | " << std::setw(12) << "Max(ms)"
+        << " | " << std::setw(12) << "Avg(ms)"
+        << " | " << std::setw(10) << "Speedup"
+        << " |\n";
     oss << "------------------------------------------------------------------------------------\n";
 
     // Baseline
-    oss << std::format("| {:<20} | {:12.3f} | {:12.3f} | {:12.3f} | {:>10} |\n", baseline_task_.first,
-        baseline_duration_.min_duration.count(), baseline_duration_.max_duration.count(),
-        baseline_duration_.average_duration.count(), "-");
+    oss << "| " << std::left << std::setw(20) << baseline_task_.first << " | " << std::right << std::setw(12)
+        << std::fixed << std::setprecision(3) << baseline_duration_.min_duration.count() << " | " << std::setw(12)
+        << baseline_duration_.max_duration.count() << " | " << std::setw(12)
+        << baseline_duration_.average_duration.count() << " | " << std::setw(10) << "-"
+        << " |\n";
 
     // Comparison tasks
     for (const auto &[name, duration] : comparison_durations_) {
         double speedup = baseline_duration_.average_duration.count() / duration.average_duration.count();
-        oss << std::format("| {:<20} | {:12.3f} | {:12.3f} | {:12.3f} | {:10.2f} |\n", name,
-            duration.min_duration.count(), duration.max_duration.count(), duration.average_duration.count(), speedup);
+        oss << "| " << std::left << std::setw(20) << name << " | " << std::right << std::setw(12) << std::fixed
+            << std::setprecision(3) << duration.min_duration.count() << " | " << std::setw(12)
+            << duration.max_duration.count() << " | " << std::setw(12) << duration.average_duration.count() << " | "
+            << std::setw(10) << std::setprecision(2) << speedup << " |\n";
     }
     oss << "====================================================================================\n";
     return oss.str();

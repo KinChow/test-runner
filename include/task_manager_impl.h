@@ -36,7 +36,7 @@ private:
     std::unordered_map<uint64_t, std::chrono::steady_clock::time_point> task_creation_times_;
     std::queue<uint64_t> recycled_ids_;
     uint64_t next_task_id_{0};
-    std::chrono::milliseconds task_timeout_{std::chrono::minutes(10)};
+    std::chrono::seconds task_timeout_{1}; // default timeout of 1 second
 };
 
 #endif  // TASK_MANAGER_IMPL_H
